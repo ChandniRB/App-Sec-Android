@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">POC4</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="login">Login</string>
+    <string name="userId">User ID</string>
+    <string name="search">Search</string>
+    <string name="token_error_message">Error occurred requesting an integrity token</string>
+    <string name="verdict_error_message">Error occurred processing integrity verdict</string>
+    <string name="server_error_message">Could not connect to the server or it
+      returned an invalid response</string>
+    <string name="unknown_error_message">An unknown error occurred</string>
+    <string name="status_unknown">Unknown</string>
+    <string name="check">Check</string>
+    <string name="ok">OK</string>
+    <string name="status_pass">Pass</string>
+    <string name="status_fail">Fail</string>
+    <string name="check_first">Please run a check first!</string>
+    <string name="show_json_response">Show JSON response</string>
+    <string name="json_response">Raw JSON response</string>
+    <string name="show_documentation">Learn what the results mean</string>
+    <string name="docs_link">https://developer.android.com/google/play/integrity/verdict#device-integrity-field</string>
+    <string name="no_browser_found">No browser found!</string>
+    <string name="about">About</string>
+    <string name="meets_basic_integrity">MEETS_BASIC_INTEGRITY</string>
+    <string name="meets_strong_integrity">MEETS_STRONG_INTEGRITY</string>
+    <string name="meets_device_integrity">MEETS_DEVICE_INTEGRITY</string>
+
+</resources>

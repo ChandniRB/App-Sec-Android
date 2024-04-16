@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.POC4" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.PlayIntegrityAPIChecker.Dialogs" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorAccent">@color/blueSecondary</item>
+        <item name="android:colorAccent" >@color/blueSecondary</item>
+        <item name="colorPrimary">@color/blueSecondary</item>
+    </style>
+
+    <style name="Theme.PlayIntegrityAPIChecker.actionButtonOverflow" parent="Widget.AppCompat.Light.ActionButton.Overflow">
+        <item name="android:tint">@color/black</item>
+    </style>
+
+    <style name="Theme.PlayIntegrityAPIChecker.actionBarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+</resources>

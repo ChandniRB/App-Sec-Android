@@ -1,0 +1,51 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+appsec-poc-server/src/main/java/vahan/config/DBConfigPaidNrvReadWrite.java
+appsec-poc-server/src/main/java/vahan/config/DBConfigVahanReadOnly.java
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+appsec-poc-server/.vscode/
+appsec-poc-server/.metals/
+appsec-poc-server/appsec_logs/
+# .config/
+appsec-poc-server/paidnr.zip
+appsec-poc-server/.metals/metals.lock.db
+appsec-poc-server/.metals/metals.log
+appsec-poc-server/.metals/metals.mv.db
+appsec-poc-server/src/main/java/vahan/config/DBConfigPaidNrvReadWrite.java
+appsec-poc-server/src/main/java/vahan/config/DBConfigVahanReadOnly.java
+appsec-poc-server/.config
+appsec-poc-server/Docker_jenkins
+appsec-poc-server/Dockerfile
+appsec-poc-server/Jenkinsfile
+appsec-poc-server/mvnw
+appsec-poc-server/mvnw.cmd
+appsec-poc-server/dbscripts
+appsec-poc-server/src/main/resources/keystore
