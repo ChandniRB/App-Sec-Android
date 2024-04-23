@@ -1,29 +1,57 @@
 package com.example.poc4
 
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.credentials.CreatePublicKeyCredentialRequest
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.GetCredentialResponse
+import androidx.credentials.GetPasswordOption
+import androidx.credentials.GetPublicKeyCredentialOption
+import androidx.credentials.PasswordCredential
+import androidx.credentials.PublicKeyCredential
+import androidx.credentials.exceptions.CreateCredentialCancellationException
+import androidx.credentials.exceptions.CreateCredentialCustomException
+import androidx.credentials.exceptions.CreateCredentialException
+import androidx.credentials.exceptions.CreateCredentialInterruptedException
+import androidx.credentials.exceptions.CreateCredentialProviderConfigurationException
+import androidx.credentials.exceptions.CreateCredentialUnknownException
+import androidx.credentials.exceptions.GetCredentialException
+import androidx.credentials.exceptions.publickeycredential.CreatePublicKeyCredentialDomException
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.example.poc4.data.CredentialRequest
 import com.example.poc4.data.Credentials
 import com.example.poc4.data.LoginResponse
 import com.example.poc4.util.ApiService
 import com.example.poc4.util.SSLPinningManager
+import com.google.gson.JsonObject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.security.SecureRandom
+import java.util.Base64
 
 
 class LoginActivity : AppCompatActivity() {
+private val context = this@LoginActivity
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +86,7 @@ class LoginActivity : AppCompatActivity() {
 
         val service: ApiService = retrofit.create(ApiService::class.java)
 
+
         service.login(context.packageName,credentials).enqueue(object : Callback<LoginResponse?> {
             override fun onResponse(
                 call: Call<LoginResponse?>,
@@ -67,7 +96,8 @@ class LoginActivity : AppCompatActivity() {
                     val loginResponse: LoginResponse? = response.body()
                     if (loginResponse != null) {
                         val accessToken = loginResponse.result.accessToken
-//                        val refreshToken = loginResponse.refreshToken
+                        val refreshToken = loginResponse.result.refreshToken
+                        val apiKey = loginResponse.result.apiKey
 
                         val masterKey: MasterKey = MasterKey.Builder(
                             this@LoginActivity,
@@ -83,7 +113,7 @@ class LoginActivity : AppCompatActivity() {
                             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
                         )
                         val editor = sharedPreferences.edit()
-//                        editor.putString("apiKey", apiKeyResponse.apiKey)
+                        editor.putString("apiKey", apiKey)
                         editor.putString("accessToken", accessToken)
                         editor.putString("project", loginResponse.result.project)
                         editor.apply()

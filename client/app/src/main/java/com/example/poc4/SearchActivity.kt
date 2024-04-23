@@ -17,52 +17,52 @@ import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.android.play.core.integrity.IntegrityManagerFactory
 import com.google.android.play.core.integrity.StandardIntegrityManager
-import com.google.android.play.core.integrity.StandardIntegrityManager.*
+import com.google.android.play.core.integrity.StandardIntegrityManager.StandardIntegrityToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.security.MessageDigest
 
 class SearchActivity : AppCompatActivity() {
+
+    var integrityTokenProvider: StandardIntegrityManager.StandardIntegrityTokenProvider? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.search_activity)
-
+        getTokenProvider()
         val searchButton = findViewById<Button>(R.id.search_btn)
         searchButton.setOnClickListener {
-            getToken()
+            search()
         }
     }
 
-    private fun getToken(){
-
+    private fun getTokenProvider(){
         val integrityManager: StandardIntegrityManager = IntegrityManagerFactory.createStandard(applicationContext)
-        var integrityTokenProvider: StandardIntegrityManager.StandardIntegrityTokenProvider?
-
         integrityManager.prepareIntegrityToken(
             StandardIntegrityManager.PrepareIntegrityTokenRequest.builder()
                 .setCloudProjectNumber(fetchSharedPreference("project").toLong())
                 .build())
             .addOnSuccessListener{
                     tokenProvider ->  integrityTokenProvider = tokenProvider
-
-                val integrityTokenResponse: Task<StandardIntegrityManager.StandardIntegrityToken>? =
-                    integrityTokenProvider?.request(StandardIntegrityManager.StandardIntegrityTokenRequest.builder().build())
-
-                integrityTokenResponse
-                    ?.addOnSuccessListener(OnSuccessListener<StandardIntegrityToken> { response: StandardIntegrityToken ->
-                        search(response.token())
-                    })
-                    ?.addOnFailureListener {
-                            exception: Exception? -> println(exception)
-                    }
             }
-            .addOnFailureListener { e: Exception -> println(e)
+            .addOnFailureListener {
+                e: Exception -> println(e)
             }
+    }
 
-
+    private fun findHash(userId: String): String {
+        val md = MessageDigest.getInstance("SHA-256")
+        val bytes = md.digest(userId.toByteArray())
+//        val digest = md.digest(bytes)
+        val sb = StringBuilder()
+        for (b in bytes) {
+            sb.append(String.format("%02X", b))
+        }
+return  sb.toString()
+//        return digest.fold("") { str, it -> str + "%02x".format(it) }
     }
 
     private fun fetchSharedPreference(key: String): String {
@@ -77,13 +77,15 @@ class SearchActivity : AppCompatActivity() {
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
-        return sharedPreferences.getString(key,
+        return sharedPreferences.getString(
+            key,
             ""
         ).toString()
 
     }
 
-    private fun search(token: String) {
+    private fun search() {
+
         val context: Context = this@SearchActivity
         val okHttpClient = SSLPinningManager.getOkHttpClient(context);
 
@@ -98,36 +100,51 @@ class SearchActivity : AppCompatActivity() {
 
                 val apiKey = fetchSharedPreference("apiKey")
                 val accessToken = "Bearer " + fetchSharedPreference("accessToken")
+        val hashedUserId = findHash(userId)
 
-        service.search(accessToken,token, context.packageName,userId,apiKey ).enqueue(object : Callback<SearchResult?> {
-            override fun onResponse(call: Call<SearchResult?>, response: Response<SearchResult?>) {
-                if (response.isSuccessful) {
-                    val searchResult: SearchResult? = response.body()
-                    if (searchResult != null) {
-                        val result = searchResult.result.toString()
-                       val resultView = findViewById<TextView>(R.id.search_results_tv)
-                        resultView.text = result
+        val integrityTokenResponse: Task<StandardIntegrityManager.StandardIntegrityToken>? =
+            integrityTokenProvider?.request(StandardIntegrityManager
+                .StandardIntegrityTokenRequest
+                .builder()
+                .setRequestHash(hashedUserId)
+                .build())
 
-                    } else {
-                        Toast.makeText(context, "Login failed!", Toast.LENGTH_SHORT)
-                            .show()
+        integrityTokenResponse
+            ?.addOnSuccessListener(OnSuccessListener<StandardIntegrityToken> { response: StandardIntegrityToken ->
+                service.search(accessToken,response.token(), context.packageName,userId,apiKey ).enqueue(object : Callback<SearchResult?> {
+                    override fun onResponse(call: Call<SearchResult?>, response: Response<SearchResult?>) {
+                        if (response.isSuccessful) {
+                            val searchResult: SearchResult? = response.body()
+                            if (searchResult != null) {
+                                val result = searchResult.result.toString()
+                                val resultView = findViewById<TextView>(R.id.search_results_tv)
+                                resultView.text = result
+
+                            } else {
+                                Toast.makeText(context, "Login failed!", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Server error: " + response.code(),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
-                } else {
-                    Toast.makeText(
-                        context,
-                        "Server error: " + response.code(),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+
+                    override fun onFailure(call: Call<SearchResult?>, t: Throwable) {
+                        Toast.makeText(
+                            context,
+                            "Network error: " + t.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                })
+            })
+            ?.addOnFailureListener {
+                    exception: Exception? -> println(exception)
             }
 
-            override fun onFailure(call: Call<SearchResult?>, t: Throwable) {
-                Toast.makeText(
-                    context,
-                    "Network error: " + t.message,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
     }
 }

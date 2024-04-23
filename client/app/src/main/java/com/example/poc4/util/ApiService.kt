@@ -16,7 +16,7 @@ interface ApiService {
     fun login(@Header("client") client: String, @Body credentials: Credentials): Call<LoginResponse>
 
     @GET("/apis/user/read/{userId}")
-    fun search(@Header("Authorization") accessToken: String, @Header("client-token") integrityToken: String, @Header("client") client: String, @Path("userId") userId: String, @Header("api-key") apiKey: String): Call<SearchResult>
+    fun search(@Header("Authorization") accessToken: String, @Header("client-token") integrityToken: String, @Header("client") client: String, @Path("userId") userId: String, @Header("x-api-key") apiKey: String): Call<SearchResult>
 
     @GET("key")
     fun key(@Header("Authorization") accessToken: String): Call<ApiKeyResponse>

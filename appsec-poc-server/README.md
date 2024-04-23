@@ -1,5 +1,5 @@
 # App-Sec-Android
-Server Application for
+Server Application for Application Security Demo
 
 ## Security measures implemented
 1. Secure storage of API key using `EncryptedSharedPreferences`

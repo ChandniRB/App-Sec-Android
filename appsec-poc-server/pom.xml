@@ -143,7 +143,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>paidnrservicesWS</finalName>
+		<finalName>appSecPoc</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

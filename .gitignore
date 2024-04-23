@@ -33,6 +33,7 @@ build/
 ### VS Code ###
 appsec-poc-server/.vscode/
 appsec-poc-server/.metals/
+appsec-poc-server/.mvn/
 appsec-poc-server/appsec_logs/
 # .config/
 appsec-poc-server/paidnr.zip
@@ -50,3 +51,4 @@ appsec-poc-server/mvnw.cmd
 appsec-poc-server/dbscripts
 appsec-poc-server/src/main/resources/keystore
 client/app/src/main/assets/localhost.crt
+appsec_logs/
