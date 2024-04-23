@@ -49,3 +49,4 @@ appsec-poc-server/mvnw
 appsec-poc-server/mvnw.cmd
 appsec-poc-server/dbscripts
 appsec-poc-server/src/main/resources/keystore
+client/app/src/main/assets/localhost.crt
