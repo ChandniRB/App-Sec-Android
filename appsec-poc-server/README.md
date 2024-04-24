@@ -1,4 +1,4 @@
-# App-Sec-Android
+# appsec-poc-server
 Server Application for Application Security Demo
 
 ## Security measures implemented
